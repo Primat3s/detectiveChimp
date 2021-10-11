@@ -1,13 +1,15 @@
 Unified OSINT project "Detective Chimp"
 =======================================
 
-World's greatest devective of monkeys.
--Unified OSINT tool-
+Introduction
+------------
+    World's greatest devective of monkeys.
+    -Unified OSINT tool-
 
 ![Sample](https://github.com/Primat3s/detectiveChimp/blob/master/sample.PNG)
 
 Features & Plan
---------
+---------------
     1. Image OSINT (Working) - Can search image's geolocation and date in Twitter for now.
     2. Username OSINT (Upcoming)
     3. Email OSINT (Upcoming)
