@@ -3,7 +3,7 @@ Unified OSINT project "Detective Chimp"
 
 Introduction
 ------------
-    World's greatest devective of monkeys.
+    The world's best detective among monkeys
     -Unified OSINT tool-
 
 ![Sample](https://github.com/Primat3s/detectiveChimp/blob/master/sample.PNG)
