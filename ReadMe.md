@@ -1,7 +1,7 @@
 Unified OSINT project "Detective Chimp"
 =======================================
 
-![Sample](./Sample.png)
+![Sample](https://github.com/Primat3s/detectiveChimp/blob/master/sample.PNG)
 
 Installation
 ------------
