@@ -27,7 +27,7 @@ twurl = "https://twitter.com/search?q="
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 global drvier
-driver = webdriver.Chrome(executable_path='./chromedriver', options=options)
+driver = webdriver.Chrome(executable_path='./drivers/chromedriver', options=options)
 wait = WebDriverWait(driver, 50)
 print ("Driver Loaded.")
 
@@ -77,7 +77,7 @@ def twit_geosearch(geotags,kilo):
     driver.get(twgeosearch)
     time.sleep(8)
     #twits = "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/div/section/div/div/div[2]/div/div/article"         
-    driver.save_screenshot("twgeo.png")
+    driver.save_screenshot("twitter_geo.png")
     twits = "/html/body/div/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/div/section/div/div/div[2]/div/div/article"    
     tweet_divs = driver.find_elements_by_xpath(twits)
     #wait.until(ec.visibility_of_element_located((By.XPATH, twits)))    
@@ -86,7 +86,7 @@ def twit_geosearch(geotags,kilo):
     
     print ("search URL : " + twgeosearch)
     
-exif = get_exif('img.jpg')
+exif = get_exif('./img/img.jpg')
 labeled = get_labeled_exif(exif)
 geotags = get_geotagging(exif)
 
