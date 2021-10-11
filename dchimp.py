@@ -29,6 +29,13 @@ twurl = "https://twitter.com/search?q="
 print_red = lambda x: cprint(x, 'red')
 print_green = lambda x: cprint(x, 'green')
 
+def load_driver():
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    global driver
+    driver = webdriver.Chrome(executable_path='./drivers/chromedriver', options=options)
+    wait = WebDriverWait(driver, 50)
 
 def get_exif(filename):
     image = Image.open(filename)
@@ -69,16 +76,17 @@ def get_coordinates(geotags):
     
     return (float(lat),float(lon))
 
-def twit_geosearch(geotags,kilo):    
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", True)
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])    
-    driver = webdriver.Chrome(executable_path='./drivers/chromedriver', options=options)
-    wait = WebDriverWait(driver, 50)
-    twgeosearch = twurl + 'q=geocode:' + str(get_coordinates(geotags)[0]) + ',' + str(get_coordinates(geotags)[1]) + ',' + kilo + '&src=typed_query'        
+def twit_geosearch(geotags, kilo, since, until):            
+    load_driver()
+    print (since)
+    print (until)
+    if (since=="" or until ==""):
+        twgeosearch = twurl + 'geocode:' + str(get_coordinates(geotags)[0]) + ',' + str(get_coordinates(geotags)[1]) + ',' + kilo + '&src=typed_query'
+    else:
+        twgeosearch = twurl + 'geocode:' + str(get_coordinates(geotags)[0]) + ',' + str(get_coordinates(geotags)[1]) + ',' + kilo + ' since:'+ since + ' until:' + until + '&src=typed_query'            
+
     driver.get(twgeosearch)
     time.sleep(8)    
-    driver.save_screenshot("twitter_geo.png")
     twits = "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/div/section/div/div/div[2]/div/div/article"         
     tweet_divs = driver.find_elements_by_xpath(twits)
     #wait.until(ec.visibility_of_element_located((By.XPATH, twits)))    
@@ -91,17 +99,21 @@ if __name__ == "__main__":
     print_green ("Author : Chamchi")
     print ("Github : https://github.com/Primat3s/detectiveChimp")
     print ("-------------------------------------------------\n")
-    print ("1. Twitter geo search\n")
+    print_green ("1. Twitter geo search\n")
+
 
     usersel = input("Please select number : ")
     print(usersel)
     if usersel == "1":
         img = input("Input image path (ex. ./img/img.jpg) : ")
-        kilo = str(input("Input distance to search (ex. 5km) : ") or "5km")
         exif = get_exif(img)
         labeled = get_labeled_exif(exif)
         geotags = get_geotagging(exif)
-        twit_geosearch(geotags,kilo)
+        kilo = str(input("Input distance to search (ex. 5km) - Default 5km : ") or "5km")
+        since = str(input("[*optional*] Input Since date (ex. 2021-10-01) : "))
+        until = str(input("[*optional*] Input Until date (ex. 2021-10-11) : "))
+        twit_geosearch(geotags,kilo,since,until)
+        
     else :
         print_red("Invalid number!")
     
