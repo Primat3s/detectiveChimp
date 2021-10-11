@@ -1,7 +1,7 @@
 Unified OSINT project "Detective Chimp"
 =======================================
 
-![Sample](Sample.png)
+![Sample](./Sample.png)
 
 Installation
 ------------
