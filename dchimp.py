@@ -29,18 +29,47 @@ twurl = "https://twitter.com/search?q="
 
 print_red = lambda x: cprint(x, 'red')
 print_green = lambda x: cprint(x, 'green')
+print_blue = lambda x: cprint(x, 'blue')
 
-def load_driver():
+global setDriver
+setDriver = "./drivers/chromedriver"        
+
+def choose_os():    
+    setOS = input ("Choose your OS - 1. Windows  2. Linux  3. Mac  4. Mac_M1 : ")
+    if setOS == "1":
+        setDriver = "./drivers/chromedriver"        
+        print_blue ("::: Windwos Selected.")
+    elif setOS == "2":
+        setDriver = "./drivers/chromedriver_l64"
+        print_blue ("::: Linux Selected.")
+    elif setOS == "3":
+        setDriver = "./drivers/chromedriver_m64"
+        print_blue ("::: Mac Selected.")
+    elif setOS == "4":
+        setDriver = "./drivers/chromedriver_m164"
+        print_blue ("::: Mac M1 Selected.")
+    else:
+        setDriver = "./drivers/chromedriver_l64"
+        print_blue ("::: Not matched, Linux Selected.")
+
+def load_driver():    
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     global driver
-    driver = webdriver.Chrome(executable_path='./drivers/chromedriver', options=options)
-    wait = WebDriverWait(driver, 50)
+    try:
+        
+        driver = webdriver.Chrome(executable_path=setDriver, options=options)
+        wait = WebDriverWait(driver, 50)
+    except:
+        print_red("!!! Web driver error")
 
 def get_exif(filename):
-    image = Image.open(filename)
-    image.verify()
+    try:
+        image = Image.open(filename)
+        image.verify()
+    except:
+        print_red("!!! Image error")
     return image._getexif()
 
 def get_labeled_exif(exif):
@@ -66,8 +95,11 @@ def get_geotagging(exif):
     return geotagging
 
 def reverse_geo(loc):
-    geolocator = Nominatim(user_agent="myGeocoder")
-    location = geolocator.reverse(loc)
+    try:
+        geolocator = Nominatim(user_agent="myGeocoder")
+        location = geolocator.reverse(loc)
+    except:
+        print_red("!!! Get geolocation error")    
     print_green("Location")
     print(location.address)
 
@@ -84,21 +116,18 @@ def get_coordinates(geotags):
     return (float(lat),float(lon))
 
 def twit_geosearch(geotags, kilo, since, until):            
-    load_driver()
-    print (since)
-    print (until)
+    load_driver()    
     if (since=="" or until ==""):
         twgeosearch = twurl + 'geocode:' + str(get_coordinates(geotags)[0]) + ',' + str(get_coordinates(geotags)[1]) + ',' + kilo + '&src=typed_query'
     else:
         twgeosearch = twurl + 'geocode:' + str(get_coordinates(geotags)[0]) + ',' + str(get_coordinates(geotags)[1]) + ',' + kilo + ' since:'+ since + ' until:' + until + '&src=typed_query'            
-
     driver.get(twgeosearch)
     time.sleep(8)    
-    twits = "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/div/section/div/div/div[2]/div/div/article"         
-    tweet_divs = driver.find_elements_by_xpath(twits)
-    #wait.until(ec.visibility_of_element_located((By.XPATH, twits)))    
-    print(tweet_divs)
-    print ("search URL : " + twgeosearch)
+    #twits = "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/div/section/div/div/div[2]/div/div/article"         
+    #tweet_divs = driver.find_elements_by_xpath(twits)
+    #wait.until(ec.visibility_of_element_located((By.XPATH, twits)))        
+    print_green ("::: URL ")
+    print_blue (twgeosearch)
 
 def twit_geo():
     try:
@@ -112,23 +141,7 @@ def twit_geo():
                 print(value)
         geotags = get_geotagging(exif)
         reverse_geo(get_coordinates(geotags))
-        """
-        print_green("Brand")
-        print(str(labeled["Make"]))
-        print_green("Model")
-        print(str(labeled["Model"]))
-        print_green("Software")
-        print(str(labeled["Software"]))
-        print_green("DateTime")
-        print(str(labeled["DateTime"]))
-        print_green("OriginalDateTime")
-        print(str(labeled["DateTimeOriginal"]))
-        print_green("DigitalDateTime")
-        print(str(labeled["DateTimeDigitized"]))
-        print_green("UserComment")
-        print(str(labeled["UserComment"]))
-        
-        """
+
     except KeyError:
         pass        
     
@@ -138,19 +151,24 @@ def twit_geo():
     until = str(input("[*optional*] Input Until date (ex. 2021-10-11) : "))
     twit_geosearch(geotags,kilo,since,until)
   
-if __name__ == "__main__":    
-    title = pyfiglet.figlet_format("Detective Chimp v0.1", font="slant")
+if __name__ == "__main__":            
+    title = pyfiglet.figlet_format("Detective Chimp v0.01", font="slant")
     print (title)
     print_green ("Author : Chamchi")
     print ("Github : https://github.com/Primat3s/detectiveChimp")
-    print ("-------------------------------------------------\n")
-    print_green ("1. Twitter Geo search\n")
+    while True:
+        print ("-------------------------------------------------")
+        print_red ("!!! Note : Please choose your OS before start. Default : Windows\n")
+        print_green ("0. Set OS")
+        print_green ("1. Twitter Geo Search")
+        print ("-------------------------------------------------\n")
 
-
-    usersel = input("Please select number : ")
-    print(usersel)
-    if usersel == "1":
-        twit_geo()        
-    else :
-        print_red("Invalid number!")
+        usersel = input("Please select number : ")
+        print(usersel)
+        if usersel == "0":
+            choose_os()
+        elif usersel == "1":
+            twit_geo()        
+        else :
+            print_red("Invalid number!")
     
