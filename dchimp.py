@@ -5,6 +5,7 @@ import requests
 import datetime as dt
 import time
 
+from geopy.geocoders import Nominatim
 from pyfiglet import Figlet
 from termcolor import colored, cprint
 from bs4 import BeautifulSoup
@@ -50,19 +51,25 @@ def get_labeled_exif(exif):
 
 def get_geotagging(exif):
     if not exif:
-        raise ValueError("!!! No EXIF metadata found")
+        print_red("!!! No EXIF metadata found")
 
     geotagging = {}
     for (idx, tag) in TAGS.items():
         if tag == 'GPSInfo':
             if idx not in exif:
-                raise ValueError("!!! No EXIF geotagging found")
+                print_red("!!! No EXIF geotagging found")
 
             for (key, val) in GPSTAGS.items():
                 if key in exif[idx]:
                     geotagging[val] = exif[idx][key]
 
     return geotagging
+
+def reverse_geo(loc):
+    geolocator = Nominatim(user_agent="myGeocoder")
+    location = geolocator.reverse(loc)
+    print_green("Location")
+    print(location.address)
 
 def decimal_coords(coords, ref):
     decimal_degrees = coords[0] + coords[1] / 60 + coords[2] / 3600
@@ -92,6 +99,44 @@ def twit_geosearch(geotags, kilo, since, until):
     #wait.until(ec.visibility_of_element_located((By.XPATH, twits)))    
     print(tweet_divs)
     print ("search URL : " + twgeosearch)
+
+def twit_geo():
+    try:
+        img = input("Input image path (ex. ./img/img.jpg) : ")
+        exif = get_exif(img)
+        labeled = get_labeled_exif(exif)        
+        print("-------------------------------------------------------------------------------")          
+        for attribute, value in labeled.items():
+            if (attribute=="Make" or attribute=="Model" or attribute=="Software" or attribute=="DateTime" or attribute=="DateTimeOriginal" or attribute=="DateTimeDigitized" or attribute=="UserComment"):
+                print_green(attribute)
+                print(value)
+        geotags = get_geotagging(exif)
+        reverse_geo(get_coordinates(geotags))
+        """
+        print_green("Brand")
+        print(str(labeled["Make"]))
+        print_green("Model")
+        print(str(labeled["Model"]))
+        print_green("Software")
+        print(str(labeled["Software"]))
+        print_green("DateTime")
+        print(str(labeled["DateTime"]))
+        print_green("OriginalDateTime")
+        print(str(labeled["DateTimeOriginal"]))
+        print_green("DigitalDateTime")
+        print(str(labeled["DateTimeDigitized"]))
+        print_green("UserComment")
+        print(str(labeled["UserComment"]))
+        
+        """
+    except KeyError:
+        pass        
+    
+    print("-------------------------------------------------------------------------------")
+    kilo = str(input("Input distance to search (ex. 5km) - Default 5km : ") or "5km")
+    since = str(input("[*optional*] Input Since date (ex. 2021-10-01) : "))
+    until = str(input("[*optional*] Input Until date (ex. 2021-10-11) : "))
+    twit_geosearch(geotags,kilo,since,until)
   
 if __name__ == "__main__":    
     title = pyfiglet.figlet_format("Detective Chimp v0.1", font="slant")
@@ -99,21 +144,13 @@ if __name__ == "__main__":
     print_green ("Author : Chamchi")
     print ("Github : https://github.com/Primat3s/detectiveChimp")
     print ("-------------------------------------------------\n")
-    print_green ("1. Twitter geo search\n")
+    print_green ("1. Twitter Geo search\n")
 
 
     usersel = input("Please select number : ")
     print(usersel)
     if usersel == "1":
-        img = input("Input image path (ex. ./img/img.jpg) : ")
-        exif = get_exif(img)
-        labeled = get_labeled_exif(exif)
-        geotags = get_geotagging(exif)
-        kilo = str(input("Input distance to search (ex. 5km) - Default 5km : ") or "5km")
-        since = str(input("[*optional*] Input Since date (ex. 2021-10-01) : "))
-        until = str(input("[*optional*] Input Until date (ex. 2021-10-11) : "))
-        twit_geosearch(geotags,kilo,since,until)
-        
+        twit_geo()        
     else :
         print_red("Invalid number!")
     
