@@ -2,8 +2,8 @@ Unified OSINT project "Detective Chimp"
 =======================================
 Author
 ------------
-    Lee SeungHwan
-    Park JiHye
+    Lee SeungHwan (chamchist@gmail.com)
+    Park JiHye  (ppagi6@daum.net)
 
 Introduction
 ------------
