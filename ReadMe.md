@@ -5,6 +5,8 @@ Introduction
 ------------
     The world's best detective among monkeys
     -Unified OSINT tool-
+    Author : Chamchi
+    Mail : chamchist@gmail.com
 
 ![Sample](https://github.com/Primat3s/detectiveChimp/blob/master/sample.PNG)
 
