@@ -1,5 +1,9 @@
 Unified OSINT project "Detective Chimp"
 =======================================
+Author
+------------
+    Lee SeungHwan (chamchist@gmail.com)
+    Park JiHye  (ppagi6@daum.net)
 
 Introduction
 ------------
@@ -16,7 +20,6 @@ Features & Plan
     2. Username OSINT (Upcoming)
     3. Email OSINT (Upcoming)
     ... and more
-
 
 
 Installation
